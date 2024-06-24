@@ -9,7 +9,6 @@ The WebApiSolution project aims to deliver a reliable and efficient web API solu
 ## Features
 
 - RESTful API design
-- Authentication and Authorization
 - CRUD operations
 - Error handling and logging
 - Unit and integration testing
