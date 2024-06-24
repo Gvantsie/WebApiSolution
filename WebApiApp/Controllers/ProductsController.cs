@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models;
 using Services;
-
-namespace WebApiApp.Controllers;
+using Domain.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -23,7 +23,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(int id)
+    public async Task<ActionResult<Product>> GetProductById(int id)
     {
         var product = await _productService.GetProductByIdAsync(id);
         if (product == null)
@@ -33,32 +33,6 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Product>> AddProduct(Product product)
-    {
-        var newProduct = await _productService.AddProductAsync(product);
-        return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, Product product)
-    {
-        if (id != product.Id)
-        {
-            return BadRequest();
-        }
-
-        await _productService.UpdateProductAsync(product);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProduct(int id)
-    {
-        await _productService.DeleteProductAsync(id);
-        return NoContent();
-    }
-
     [HttpGet("category/{categoryId}")]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCategory(int categoryId)
     {
@@ -66,15 +40,40 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("category/{categoryId}/total-price")]
+    [HttpGet("totalprice/category/{categoryId}")]
     public async Task<ActionResult<decimal>> GetTotalPriceByCategory(int categoryId)
     {
         var totalPrice = await _productService.GetTotalPriceByCategoryAsync(categoryId);
         return Ok(totalPrice);
     }
 
-    [HttpGet("total-price-per-category")]
-    public async Task<ActionResult<Dictionary<string, decimal>>> GetTotalPricePerCategory()
+    [HttpPost]
+    public async Task<ActionResult> AddProduct(Product product)
+    {
+        await _productService.AddProductAsync(product);
+        return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateProduct(int id, Product product)
+    {
+        if (id != product.Id)
+        {
+            return BadRequest();
+        }
+        await _productService.UpdateProductAsync(product);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteProduct(int id)
+    {
+        await _productService.DeleteProductAsync(id);
+        return NoContent();
+    }
+
+    [HttpGet("totalpricepercategory")]
+    public async Task<ActionResult<Dictionary<int, decimal>>> GetTotalPricePerCategory()
     {
         var totalPrices = await _productService.GetTotalPricePerCategoryAsync();
         return Ok(totalPrices);
