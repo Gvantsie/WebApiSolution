@@ -1,0 +1,21 @@
+dotnet new sln -n WebApiSolution
+dotnet new classlib -n Domain
+dotnet new classlib -n Data
+dotnet new classlib -n Services
+dotnet new webapi -n WebApiApp
+
+dotnet sln add Domain/Domain.csproj
+dotnet sln add Data/Data.csproj
+dotnet sln add Services/Services.csproj
+dotnet sln add WebApiApp/WebApiApp.csproj
+
+dotnet add Data/Data.csproj reference Domain/Domain.csproj
+dotnet add Services/Services.csproj reference Domain/Domain.csproj
+dotnet add Services/Services.csproj reference Data/Data.csproj
+dotnet add WebApiApp/WebApiApp.csproj reference Domain/Domain.csproj
+dotnet add WebApiApp/WebApiApp.csproj reference Data/Data.csproj
+dotnet add WebApiApp/WebApiApp.csproj reference Services/Services.csproj
+
+dotnet add Data/Data.csproj package Microsoft.EntityFrameworkCore
+dotnet add Data/Data.csproj package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add WebApiApp/WebApiApp.csproj package Microsoft.EntityFrameworkCore.Design
